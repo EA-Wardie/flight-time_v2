@@ -1,0 +1,7 @@
+{
+  "name": "flight-time",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
