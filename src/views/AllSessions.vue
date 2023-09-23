@@ -16,14 +16,11 @@
     IonSearchbar,
     IonToast,
     onIonViewDidEnter,
-    IonIcon,
-    IonActionSheet,
-  } from '@ionic/vue';
-  import {useSessionsStore} from '@/stores/sessions';
+  } from "@ionic/vue";
+  import {useSessionsStore} from "@/stores/sessions";
   import {nextTick, ref} from "vue";
   import {Ref} from "vue";
   import {Session} from "@/interfaces/Session";
-  import {ellipsisVertical} from "ionicons/icons";
 
   const store = useSessionsStore();
   const sessions: Ref<Session[]> = ref([]);
@@ -32,14 +29,10 @@
 
   function setSessions() {
     sessions.value = store.allSessions.sort((a: Session, b: Session) => {
-      if (a.id !== null && b.id !== null) {
-        if (a.id > b.id) {
-          return -1;
-        } else if (a.id < b.id) {
-          return 1;
-        }
-
-        return 0;
+      if (a.timestamp > b.timestamp) {
+        return -1;
+      } else if (a.timestamp < b.timestamp) {
+        return 1;
       }
 
       return 0;
@@ -49,65 +42,19 @@
   onIonViewDidEnter(() => setSessions());
 
   function filterSessions(event: any): void {
-    const term = event.target.value.toLowerCase().split('-').join('') as string;
+    const term = event.target.value.toLowerCase().split("-").join("") as string;
 
     if (term.length > 1) {
       sessions.value = store.allSessions.filter(
-          ({registration}) =>
-              registration.toLowerCase().split('-').join('').includes(term)
-              || registration === ''
+          ({id, registration}) =>
+              id?.includes(term) ||
+              registration.toLowerCase().split("-").join("").includes(term) ||
+              registration === ""
       );
     } else {
       setSessions();
     }
   }
-
-  const showDeleteAlert: Ref<boolean> = ref(false);
-
-  function showDeleteAllConfirm() {
-    showDeleteAlert.value = true;
-  }
-
-  function closeDeleteAllConfirm() {
-    showDeleteAlert.value = false;
-  }
-
-  function deleteAllSession() {
-    closeDeleteAllConfirm();
-    store.deleteAll();
-    setSessions();
-  }
-
-  const actionSheetButtons = [
-    {
-      text: 'Delete All Sessions',
-      role: 'destructive',
-      handler: (): void => {
-        showDeleteAllConfirm();
-      },
-    },
-    {
-      text: 'Cancel',
-      role: 'cancel',
-      data: {
-        action: 'cancel',
-      },
-    },
-  ];
-
-  const alertDeleteAllButtons: Ref<object[]> = ref([
-    {
-      text: 'Cancel',
-      role: 'destructive',
-    },
-    {
-      text: 'Delete',
-      role: 'confirm',
-      handler: (): void => {
-        deleteAllSession();
-      },
-    },
-  ]);
 
   function openDetails(session: Session): void {
     selectedSession.value = JSON.parse(JSON.stringify(session));
@@ -123,12 +70,12 @@
 
   const alertButtons: Ref<object[]> = ref([
     {
-      text: 'Cancel',
-      role: 'destructive',
+      text: "Cancel",
+      role: "destructive",
     },
     {
-      text: 'Delete',
-      role: 'confirm',
+      text: "Delete",
+      role: "confirm",
       handler: (): void => {
         deleteSession();
       },
@@ -136,12 +83,14 @@
   ]);
 
   function deleteSession(): void {
-    store.delete(selectedSession.value?.id ?? null).then(() => {
-      setSessions();
-      showSnackbar();
-    });
+    if (selectedSession.value !== null) {
+      store.delete(selectedSession.value.id).then(() => {
+        setSessions();
+        showSnackbar();
+      });
 
-    nextTick(() => showDetails.value = false);
+      nextTick(() => (showDetails.value = false));
+    }
   }
 
   const snackbar: Ref<boolean> = ref(false);
@@ -153,6 +102,7 @@
   function closeSnackbar(): void {
     snackbar.value = false;
   }
+
 </script>
 
 <template>
@@ -160,24 +110,6 @@
     <ion-header>
       <ion-toolbar>
         <ion-title>All Sessions</ion-title>
-        <ion-buttons slot="primary">
-          <ion-button id="open-sessions-actions">
-            <ion-icon slot="icon-only" :md="ellipsisVertical"></ion-icon>
-          </ion-button>
-          <ion-action-sheet
-              trigger="open-sessions-actions"
-              header="Actions"
-              :buttons="actionSheetButtons"
-          ></ion-action-sheet>
-          <ion-alert
-              header="Confirm"
-              sub-header="Delete All Session"
-              message="Are you sure you would like to delete all sessions. This action is final"
-              :is-open="showDeleteAlert"
-              :buttons="alertDeleteAllButtons"
-              @didDismiss="closeDeleteAllConfirm"
-          ></ion-alert>
-        </ion-buttons>
       </ion-toolbar>
       <ion-toolbar v-show="store.hasSessions">
         <ion-searchbar
@@ -191,17 +123,23 @@
     </ion-header>
     <ion-content :fullscreen="true">
       <ion-list inset lines="full" v-if="store.hasSessions">
-        <ion-item :key="session.id as number" v-for="(session) in sessions">
+        <ion-item :key="(session.id as string)" v-for="session in sessions">
           <ion-label>
             <h3 :class="[session.registration ? 'ion-text-uppercase' : '']">
-              {{ session.registration || 'No Registration' }}
+              {{ session.registration || "No Registration" }}
             </h3>
             <p>{{ session.start }}</p>
           </ion-label>
-          <ion-button slot="end" @click="openDetails(session)">Details</ion-button>
+          <ion-button slot="end" @click="openDetails(session)"
+          >Details
+          </ion-button
+          >
         </ion-item>
       </ion-list>
-      <div class="expanded flex column ion-justify-content-center ion-align-items-center" v-else>
+      <div
+          class="expanded flex column ion-justify-content-center ion-align-items-center"
+          v-else
+      >
         <ion-text>
           <h3>No Sessions Yet</h3>
         </ion-text>
@@ -210,7 +148,6 @@
         </ion-text>
       </div>
     </ion-content>
-
     <ion-modal :is-open="showDetails" @didDismess="closeDetails">
       <ion-header>
         <ion-toolbar>
@@ -225,7 +162,7 @@
           <ion-item>
             <ion-label>Aircraft Registration</ion-label>
             <ion-label slot="end" class="ion-text-uppercase">
-              <b>{{ selectedSession.registration || '-' }}</b>
+              <b>{{ selectedSession.registration || "-" }}</b>
             </ion-label>
           </ion-item>
 
@@ -310,6 +247,4 @@
   </ion-page>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
