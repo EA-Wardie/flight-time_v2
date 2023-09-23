@@ -1,5 +1,3 @@
-import {Dayjs} from "dayjs";
-
 export interface Session {
     id: string | null,
     registration: string,
@@ -8,4 +6,5 @@ export interface Session {
     takeoff: string | null,
     land: string | null,
     shutoff: string | null,
+    created_at: string | null,
 }

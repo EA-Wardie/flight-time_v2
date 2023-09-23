@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia';
 import {v4 as uuid} from 'uuid';
 import {Session} from "@/interfaces/Session";
+import dayjs from "dayjs";
 
 export const useSessionsStore = defineStore('sessions', {
     state: (): { sessions: Session[] } => ({
@@ -15,6 +16,7 @@ export const useSessionsStore = defineStore('sessions', {
             this.sessions.push({
                 ...session,
                 id: uuid(),
+                created_at: dayjs(Date.now()).format('DD-MM-YYYY HH:mm:ss'),
             } as Session);
         },
         async delete(sessionId: string | null): Promise<void> {

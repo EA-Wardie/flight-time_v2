@@ -28,7 +28,15 @@
     const selectedSession: Ref<null | Session> = ref(null);
 
     function setSessions() {
-        sessions.value = store.allSessions.sort((a: Session, b: Session) => dayjs(a.start).isBefore(dayjs(b.start)) ? 1 : -1);
+        sessions.value = store.allSessions.sort((a: Session, b: Session) => {
+            if (dayjs(a.created_at).isBefore(dayjs(b.created_at))) {
+                return -1;
+            } else if (dayjs(a.created_at).isAfter(dayjs(b.created_at))) {
+                return 1;
+            }
+
+            return 0;
+        });
     }
 
     onMounted(() => setSessions());
@@ -38,9 +46,8 @@
 
         if (term.length > 1) {
             sessions.value = store.allSessions.filter(
-                ({id, registration}) =>
-                    id?.includes(term)
-                    || registration.toLowerCase().split('-').join('').includes(term)
+                ({registration}) =>
+                    registration.toLowerCase().split('-').join('').includes(term)
                     || registration === ''
             );
         } else {
@@ -79,6 +86,7 @@
             setSessions();
             showSnackbar();
         });
+
         nextTick(() => showDetails.value = false);
     }
 
@@ -116,7 +124,7 @@
                         <h3 :class="[session.registration ? 'ion-text-uppercase' : '']">
                             {{ session.registration || 'No Registration' }}
                         </h3>
-                        <p>{{ dayjs(session.start).format('dddd, MMMM YYYY') }}</p>
+                        <p>{{ session.start }}</p>
                     </ion-label>
                     <ion-button slot="end" @click="openDetails(session)">Details</ion-button>
                 </ion-item>
