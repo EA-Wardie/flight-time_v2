@@ -18,20 +18,18 @@
     } from '@ionic/vue';
     import {useSessionsStore} from '@/stores/sessions';
     import dayjs from 'dayjs';
-    import {nextTick, onMounted, ref} from "vue";
+    import {nextTick, ref} from "vue";
     import {Ref} from "vue";
     import {Session} from "@/interfaces/Session";
 
     const store = useSessionsStore();
-    const sessions: Ref<Session[]> = ref([]);
+    const sessions: Ref<Session[]> = ref(store.allSessions);
     const showDetails: Ref<boolean> = ref(false);
     const selectedSession: Ref<null | Session> = ref(null);
 
     function setSessions() {
-        sessions.value = store.allSessions.sort((a: Session, b: Session) => dayjs(a.start).isBefore(dayjs(b.start)) ? 1 : -1);
+        sessions.value = store.allSessions;
     }
-
-    onMounted(() => setSessions());
 
     function filterSessions(event: any): void {
         const term = event.target.value.toLowerCase().split('-').join('') as string;
@@ -79,7 +77,6 @@
             setSessions();
             showSnackbar();
         });
-
         nextTick(() => showDetails.value = false);
     }
 
@@ -100,7 +97,7 @@
             <ion-toolbar>
                 <ion-title>All Sessions</ion-title>
             </ion-toolbar>
-            <ion-toolbar v-show="sessions.length > 0">
+            <ion-toolbar>
                 <ion-searchbar
                     animated
                     show-clear-button="focus"
@@ -153,7 +150,7 @@
                     <ion-item>
                         <ion-label>Created</ion-label>
                         <ion-label slot="end">
-                            <p>{{ dayjs(selectedSession.start).format('dddd, MMMM YYYY') }}</p>
+                            <p>{{ selectedSession.start }}</p>
                         </ion-label>
                     </ion-item>
 
@@ -161,43 +158,43 @@
                         <ion-label>Total Time</ion-label>
                         <ion-label slot="end">
                             <p>{{
-                                    dayjs(selectedSession.shutoff).diff(selectedSession.start, 'minutes', true).toFixed(1)
-                                }}h</p>
+                                    selectedSession.shutoff
+                                }}</p>
                         </ion-label>
                     </ion-item>
 
                     <ion-item>
                         <ion-label>Engine Start</ion-label>
                         <ion-label slot="end">
-                            <p>{{ dayjs(selectedSession.start).format('HH:mm') }}</p>
+                            <p>{{ selectedSession.start }}</p>
                         </ion-label>
                     </ion-item>
 
                     <ion-item>
                         <ion-label>Taxi Start</ion-label>
                         <ion-label slot="end">
-                            <p>{{ dayjs(selectedSession.taxi).format('HH:mm') }}</p>
+                            <p>{{ selectedSession.taxi }}</p>
                         </ion-label>
                     </ion-item>
 
                     <ion-item>
                         <ion-label>Takeoff</ion-label>
                         <ion-label slot="end">
-                            <p>{{ dayjs(selectedSession.takeoff).format('HH:mm') }}</p>
+                            <p>{{ selectedSession.takeoff }}</p>
                         </ion-label>
                     </ion-item>
 
                     <ion-item>
                         <ion-label>Landed</ion-label>
                         <ion-label slot="end">
-                            <p>{{ dayjs(selectedSession.land).format('HH:mm') }}</p>
+                            <p>{{ selectedSession.land }}</p>
                         </ion-label>
                     </ion-item>
 
                     <ion-item>
                         <ion-label>Engine Shutoff</ion-label>
                         <ion-label slot="end">
-                            <p>{{ dayjs(selectedSession.shutoff).format('HH:mm') }}</p>
+                            <p>{{ selectedSession.shutoff }}</p>
                         </ion-label>
                     </ion-item>
                 </ion-list>
