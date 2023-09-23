@@ -16,16 +16,9 @@
   import {Ref, ref} from "vue";
   import dayjs from 'dayjs';
   import {Session} from "@/interfaces/Session";
-  import {maskito as vMaskito} from '@maskito/vue';
-  import {MaskitoOptions} from "@maskito/core";
 
   const store = useSessionsStore();
   const showActions: Ref<boolean> = ref(false);
-
-  const registrationOptions = {
-    mask: [/[a-zA-Z]/g, /[a-zA-Z]/g, '-', /[0-9a-zA-Z]/g, /[0-9a-zA-Z]/g, /[0-9a-zA-Z]/g],
-  } as MaskitoOptions;
-
   const session: Ref<Session> = ref({
     id: null,
     registration: '',
@@ -119,8 +112,8 @@
             <ion-input
                 label="Registration No:"
                 placeholder="ZX-XXX"
-                v-maskito="registrationOptions"
                 v-model="session.registration"
+                @input="session.registration = session.registration.toUpperCase()"
             ></ion-input>
           </ion-item>
 

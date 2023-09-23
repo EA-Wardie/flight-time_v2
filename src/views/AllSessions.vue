@@ -18,18 +18,20 @@
     } from '@ionic/vue';
     import {useSessionsStore} from '@/stores/sessions';
     import dayjs from 'dayjs';
-    import {nextTick, ref} from "vue";
+    import {nextTick, onMounted, ref} from "vue";
     import {Ref} from "vue";
     import {Session} from "@/interfaces/Session";
 
     const store = useSessionsStore();
-    const sessions: Ref<Session[]> = ref(store.allSessions);
+    const sessions: Ref<Session[]> = ref([]);
     const showDetails: Ref<boolean> = ref(false);
     const selectedSession: Ref<null | Session> = ref(null);
 
     function setSessions() {
-        sessions.value = store.allSessions;
+        sessions.value = store.allSessions.sort((a: Session, b: Session) => dayjs(a.start).isBefore(dayjs(b.start)) ? 1 : -1);
     }
+
+    onMounted(() => setSessions());
 
     function filterSessions(event: any): void {
         const term = event.target.value.toLowerCase().split('-').join('') as string;
@@ -97,7 +99,7 @@
             <ion-toolbar>
                 <ion-title>All Sessions</ion-title>
             </ion-toolbar>
-            <ion-toolbar>
+            <ion-toolbar v-show="store.hasSessions">
                 <ion-searchbar
                     animated
                     show-clear-button="focus"
