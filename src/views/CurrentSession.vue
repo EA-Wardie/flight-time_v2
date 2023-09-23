@@ -192,7 +192,7 @@ onIonViewWillLeave(() => {
     </ion-content>
 
     <ion-toast
-      message="currentSession successfully recorded"
+      message="Session successfully recorded."
       position="top"
       color="success"
       :is-open="snackbar"

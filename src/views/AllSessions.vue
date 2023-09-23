@@ -1,27 +1,4 @@
 <script setup lang="ts">
-<<<<<<< HEAD
-    import {
-        IonPage,
-        IonHeader,
-        IonToolbar,
-        IonTitle,
-        IonContent,
-        IonItem,
-        IonLabel,
-        IonButton,
-        IonModal,
-        IonButtons,
-        IonAlert,
-        IonList,
-        IonText,
-        IonSearchbar,
-        IonToast, onIonViewDidEnter,
-    } from '@ionic/vue';
-    import {useSessionsStore} from '@/stores/sessions';
-    import {nextTick, ref} from "vue";
-    import {Ref} from "vue";
-    import {Session} from "@/interfaces/Session";
-=======
 import {
   IonPage,
   IonHeader,
@@ -38,47 +15,37 @@ import {
   IonText,
   IonSearchbar,
   IonToast,
+  onIonViewDidEnter,
 } from "@ionic/vue";
 import { useSessionsStore } from "@/stores/sessions";
-import dayjs from "dayjs";
-import { nextTick, onMounted, ref } from "vue";
+import { nextTick, ref } from "vue";
 import { Ref } from "vue";
 import { Session } from "@/interfaces/Session";
->>>>>>> 723000e (updated code)
 
 const store = useSessionsStore();
 const sessions: Ref<Session[]> = ref([]);
 const showDetails: Ref<boolean> = ref(false);
 const selectedSession: Ref<null | Session> = ref(null);
 
-<<<<<<< HEAD
-    function setSessions() {
-        sessions.value = store.allSessions.sort((a: Session, b: Session) => {
-            if (a.id !== null && b.id !== null) {
-                if (a.id > b.id) {
-                    return -1;
-                } else if (a.id < b.id) {
-                    return 1;
-                }
-
-                return 0;
-            }
-=======
 function setSessions() {
-  sessions.value = store.allSessions.sort((a: Session, b: Session) =>
-    dayjs(a.start).isBefore(dayjs(b.start)) ? 1 : -1
-  );
+  sessions.value = store.allSessions.sort((a: Session, b: Session) => {
+    if (a.timestamp !== null && b.timestamp !== null) {
+      if (a.timestamp > b.timestamp) {
+        return -1;
+      } else if (a.timestamp < b.timestamp) {
+        return 1;
+      }
+
+      return 0;
+    }
+    return 0;
+  });
 }
->>>>>>> 723000e (updated code)
 
-onMounted(() => setSessions());
+onIonViewDidEnter(() => setSessions());
 
-<<<<<<< HEAD
-    onIonViewDidEnter(() => setSessions());
-=======
 function filterSessions(event: any): void {
   const term = event.target.value.toLowerCase().split("-").join("") as string;
->>>>>>> 723000e (updated code)
 
   if (term.length > 1) {
     sessions.value = store.allSessions.filter(
@@ -138,44 +105,6 @@ function closeSnackbar(): void {
 </script>
 
 <template>
-<<<<<<< HEAD
-    <ion-page>
-        <ion-header>
-            <ion-toolbar>
-                <ion-title>All Sessions</ion-title>
-            </ion-toolbar>
-            <ion-toolbar v-show="store.hasSessions">
-                <ion-searchbar
-                    animated
-                    show-clear-button="focus"
-                    placeholder="Find Session..."
-                    :debounce="1000"
-                    @input="filterSessions"
-                ></ion-searchbar>
-            </ion-toolbar>
-        </ion-header>
-        <ion-content :fullscreen="true">
-            <ion-list inset lines="full" v-if="store.hasSessions">
-                <ion-item :key="session.id as number" v-for="(session) in sessions">
-                    <ion-label>
-                        <h3 :class="[session.registration ? 'ion-text-uppercase' : '']">
-                            {{ session.registration || 'No Registration' }}
-                        </h3>
-                        <p>{{ session.start }}</p>
-                    </ion-label>
-                    <ion-button slot="end" @click="openDetails(session)">Details</ion-button>
-                </ion-item>
-            </ion-list>
-            <div class="expanded flex column ion-justify-content-center ion-align-items-center" v-else>
-                <ion-text>
-                    <h3>No Sessions Yet</h3>
-                </ion-text>
-                <ion-text>
-                    <h6>Start by creating your first session.</h6>
-                </ion-text>
-            </div>
-        </ion-content>
-=======
   <ion-page>
     <ion-header>
       <ion-toolbar>
@@ -193,7 +122,7 @@ function closeSnackbar(): void {
     </ion-header>
     <ion-content :fullscreen="true">
       <ion-list inset lines="full" v-if="store.hasSessions">
-        <ion-item :key="session.timestamp" v-for="session in sessions">
+        <ion-item :key="(session.id as string)" v-for="session in sessions">
           <ion-label>
             <h3 :class="[session.registration ? 'ion-text-uppercase' : '']">
               {{ session.registration || "No Registration" }}
@@ -217,8 +146,6 @@ function closeSnackbar(): void {
         </ion-text>
       </div>
     </ion-content>
->>>>>>> 723000e (updated code)
-
     <ion-modal :is-open="showDetails" @didDismess="closeDetails">
       <ion-header>
         <ion-toolbar>
