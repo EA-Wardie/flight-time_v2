@@ -197,14 +197,6 @@
             </ion-label>
           </ion-item>
 
-          <ion-item>
-            <ion-label>Engine Shutoff</ion-label>
-            <ion-label slot="end">
-              <p>{{ dayjs(selectedSession.shutoff).format('hh:mm') }}</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-
         <div class="ion-padding-horizontal">
           <ion-button
               id="trigger-delete-confirm"
