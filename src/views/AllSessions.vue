@@ -66,15 +66,10 @@
   }
 
   function calculateFlightTime(): string {
-    console.log(selectedSession.value);
+    const timeShutOff = dayjs(`${dayjs().format('YYYY-MM-DD')} ${selectedSession.value?.shutoff}`);
+    const timeTaxi = dayjs(`${dayjs().format('YYYY-MM-DD')} ${selectedSession.value?.taxi}`);
 
-    const timeShutOff = dayjs(selectedSession.value?.shutoff);
-    const timeTaxi = dayjs(selectedSession.value?.taxi);
-
-    console.log(timeShutOff);
-    console.log(timeTaxi);
-
-    return ''
+    return (dayjs(timeShutOff).diff(timeTaxi, 'm') / 60).toFixed(1);
   }
 
   function closeDetails(): void {
