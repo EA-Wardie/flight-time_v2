@@ -21,6 +21,7 @@
   import {nextTick, ref} from "vue";
   import {Ref} from "vue";
   import {Session} from "@/interfaces/Session";
+  import dayjs from "dayjs"
 
   const store = useSessionsStore();
   const sessions: Ref<Session[]> = ref([]);
@@ -62,6 +63,18 @@
     nextTick(() => {
       showDetails.value = true;
     });
+  }
+
+  function calculateFlightTime(): string {
+    console.log(selectedSession.value);
+
+    const timeShutOff = dayjs(selectedSession.value?.shutoff);
+    const timeTaxi = dayjs(selectedSession.value?.taxi);
+
+    console.log(timeShutOff);
+    console.log(timeTaxi);
+
+    return ''
   }
 
   function closeDetails(): void {
@@ -128,7 +141,7 @@
             <h3 :class="[session.registration ? 'ion-text-uppercase' : '']">
               {{ session.registration || "No Registration" }}
             </h3>
-            <p>{{ session.start }}</p>
+            <p>{{ dayjs(session.timestamp).format("YYYY-MM-DD HH:mm") }}</p>
           </ion-label>
           <ion-button slot="end" @click="openDetails(session)"
           >Details
@@ -167,16 +180,16 @@
           </ion-item>
 
           <ion-item>
-            <ion-label>Created</ion-label>
+            <ion-label>Saved On</ion-label>
             <ion-label slot="end">
-              <p>{{ selectedSession.start }}</p>
+              <p>{{ dayjs(selectedSession.timestamp).format("YYYY-MM-DD HH:mm") }}</p>
             </ion-label>
           </ion-item>
 
           <ion-item>
             <ion-label>Total Time</ion-label>
             <ion-label slot="end">
-              <p>{{ selectedSession.shutoff }}</p>
+              <p>{{ calculateFlightTime() }}</p>
             </ion-label>
           </ion-item>
 

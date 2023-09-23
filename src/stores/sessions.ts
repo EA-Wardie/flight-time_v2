@@ -16,7 +16,7 @@ export const useSessionsStore = defineStore("sessions", {
       this.sessions.push({
         ...session,
         id: uuid(),
-        timestamp: dayjs().unix(),
+        timestamp: dayjs().valueOf(),
       } as Session);
     },
 
