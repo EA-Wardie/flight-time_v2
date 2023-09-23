@@ -27,7 +27,6 @@
         takeoff: null,
         land: null,
         shutoff: null,
-        created_at: null,
     });
 
     function getCurrentTimeAsString(): string {
@@ -74,7 +73,6 @@
             takeoff: null,
             land: null,
             shutoff: null,
-            created_at: null,
         };
     }
 

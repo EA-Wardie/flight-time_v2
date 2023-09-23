@@ -14,11 +14,10 @@
         IonList,
         IonText,
         IonSearchbar,
-        IonToast,
+        IonToast, onIonViewDidEnter,
     } from '@ionic/vue';
     import {useSessionsStore} from '@/stores/sessions';
-    import dayjs from 'dayjs';
-    import {nextTick, onMounted, ref} from "vue";
+    import {nextTick, ref} from "vue";
     import {Ref} from "vue";
     import {Session} from "@/interfaces/Session";
 
@@ -29,17 +28,21 @@
 
     function setSessions() {
         sessions.value = store.allSessions.sort((a: Session, b: Session) => {
-            if (dayjs(a.created_at).isBefore(dayjs(b.created_at))) {
-                return -1;
-            } else if (dayjs(a.created_at).isAfter(dayjs(b.created_at))) {
-                return 1;
+            if (a.id !== null && b.id !== null) {
+                if (a.id > b.id) {
+                    return -1;
+                } else if (a.id < b.id) {
+                    return 1;
+                }
+
+                return 0;
             }
 
             return 0;
         });
     }
 
-    onMounted(() => setSessions());
+    onIonViewDidEnter(() => setSessions());
 
     function filterSessions(event: any): void {
         const term = event.target.value.toLowerCase().split('-').join('') as string;
@@ -119,7 +122,7 @@
         </ion-header>
         <ion-content :fullscreen="true">
             <ion-list inset lines="full" v-if="store.hasSessions">
-                <ion-item :key="session.id as string" v-for="(session) in sessions">
+                <ion-item :key="session.id as number" v-for="(session) in sessions">
                     <ion-label>
                         <h3 :class="[session.registration ? 'ion-text-uppercase' : '']">
                             {{ session.registration || 'No Registration' }}
